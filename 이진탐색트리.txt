@@ -1,0 +1,90 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+//이진탐색트리
+
+typedef struct {
+	int data;
+	struct Node* leftChild;
+	struct Node* rightChild;
+} Node;
+
+//이진탐색트리의 삽입
+Node* inserNode(Node* root, int data) {
+	if (root == NULL) {
+		root = (Node*)malloc(sizeof(Node));
+		root->leftChild = root->rightChild = NULL;
+		root->data = data;
+		return root;
+	}
+	else {
+		if (root->data > data) {
+			root->leftChild = inserNode(root->leftChild, data);
+		}
+		else {
+			root->rightChild = inserNode(root->rightChild, data);
+		}
+	}
+	return root;
+}
+
+//이진탐색트리의 탐색
+Node* searchNode(Node* root, int data) {
+	if (root == NULL)return NULL;
+	if (root->data == data)return root;
+	else if (root->data > data) return searchNode(root->leftChild, data);
+	else return searchNode(root->rightChild, data);
+}
+
+//이진탐색 트리의 순회
+void preorder(Node* root) {  //전위순회방식
+	if (root == NULL)return; 
+	printf("%d", root->data);
+	preorder(root->leftChild);
+	preorder(root->rightChild);
+}
+
+
+Node* findMinNode(Node* root) {
+	Node* node = root;
+	while (node->leftChild != NULL) {
+		node = node->leftChild;
+	}
+	return node;
+}
+
+Node* deleteNode(Node* root, int data) {
+	Node* node = NULL;
+	if (root == NULL) return NULL;
+	if (root->data > data) root->leftChild = deleteNode(root->leftChild, data);
+	else if (root->data < data) root->rightChild = deleteNode(root->rightChild, data);
+	else {
+		if (root->leftChild != NULL && root->rightChild != NULL) {
+			node = findMinNode(root->rightChild); //우측자식의 왼쪽자식(min 값)을 찾음  <==> **"자기 다음으로 큰 노드를 찾는것"
+			root->data = node->data;
+			root->rightChild = deleteNode(root->rightChild, node->data);         // root로 옮기면서 원래 있던 노드의 것은 삭제 
+		}
+		else {
+			node = (root->leftChild != NULL) ? root->leftChild : root->rightChild;
+			free(root);
+			return node;  // 노드를 반환함으로써, 자식이었던 노드가 root를 대체
+		}
+	}
+	return root;
+}
+
+
+int main(void) {
+	Node* root = NULL;
+	root = inserNode(root, 30);
+	root = inserNode(root, 17);
+	root = inserNode(root, 48);
+	root = inserNode(root, 5);
+	root = inserNode(root, 23);
+	root = inserNode(root, 37);
+	root = inserNode(root, 50);
+	root = deleteNode(root, 30);   // 기존의 root였던 30이 제거되고 그 다음크기인 37이 root 자리 차지 
+	preorder(root);
+	system("pause");
+}

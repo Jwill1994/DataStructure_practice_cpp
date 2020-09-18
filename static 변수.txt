@@ -1,0 +1,24 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+
+
+using namespace std;
+
+class Person {
+private:
+	string name;
+public:
+	static int count;    //어디서나 접근가능한 정적 변수 
+	Person(string name) : name(name) {
+		count++;
+	}
+};
+int Person::count = 0;
+
+int main(void) {
+	Person p1("장우성");
+	Person p2("장우진");
+	cout << "사람 수: " << Person::count << '\n';
+	system("pause");
+}

@@ -1,0 +1,28 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+
+
+using namespace std;
+
+class Person {
+private:
+	const int id;
+	string name;
+public:
+	static int count;    //어디서나 접근가능한 정적 변수 
+	Person(int id, string name) : id(id), name(name) {
+		count++;
+	}
+};
+/*	void setId(int id){
+		this ->id = id; //오류발생(수정불가)
+    }
+*/
+
+int main(void) {
+	Person p1(1,"장우성");
+	Person p2(2,"장우진");
+	cout << "사람 수: " << Person::count << '\n';
+	system("pause");
+}

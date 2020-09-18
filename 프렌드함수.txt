@@ -1,0 +1,27 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// 프렌드함수 구현 
+class Student {
+private:
+	int studentID;
+	string name;
+public:
+	Student(int studentID, string name) : studentID(studentID), name(name) { }  
+	friend Student operator +(const Student &student, const Student &other) {     // 매개변수를 2개 사용하는 연산자 오버로딩 같은 경우는 반드시 friend를 붙여줘야 한다 
+		return Student(student.studentID, student.name + "&" + other.name); // friend 키워드를 이용해 private 이름에 접근
+//	Student operator +(const Student &other) { // 일반적인 연산자 오버로딩은 매개변수 하나만 받음
+//	return Student(studentID, name + "&" + other.name); 
+//}
+	}
+	void showName() { cout << "이름:" << name << '\n'; }
+};
+
+int main(void) {
+	Student student(1, "장우성");
+	Student result = student + student;
+	result.showName();
+	system("pause");
+}

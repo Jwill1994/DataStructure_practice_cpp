@@ -1,0 +1,20 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <limits.h>
+#define MAX_VALUE 10001 
+//계수정렬은 데이터의 크기를 기준으로 정렬을 진행하므로 MAX_VALUE 보다 큰 값이 데이터 안에 있으면 정렬수행불가 (많은 양의 컴퓨팅 자원이 소모되므로 크기제한은 필수)
+//퀵정렬 등 다른 정렬 알고리즘보다 많은 메모리를 요구하는 대신 빠르게 동작 
+
+//계수정렬 _ n 시간복잡도  
+int n, m;
+int a[MAX_VALUE];
+
+int main(void) {
+	scanf("%d", &n);
+	for (int i = 0; i < n; i++) { scanf("%d", &m); a[m]++; }
+	for (int i = 0; i < MAX_VALUE; i++) {
+		while (a[i] != 0) { printf("%d", i); a[i]--; }
+	}
+	system("pause");
+}
+

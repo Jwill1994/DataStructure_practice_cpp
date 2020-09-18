@@ -1,0 +1,57 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX_SIZE 1001
+
+//깊이우선 탐색(스택기반_ 재귀함수로도 구현가능)
+
+typedef struct {
+	int index;
+	struct Node *next;
+} Node;    //연결리스트 정의
+
+Node** a;  //연결리스트가 여러개 있다고가정(정점이 여러개있다고 가정) 하므로 이차원 포인터 할당 
+int n, m, c[MAX_SIZE];  // n:정점, m:간선, c: 현재 방문했는지 체크
+
+
+//연결리스트 삽입함수
+void addFront(Node *root, int index) {
+	Node *node = (Node*)malloc(sizeof(Node));
+	node->index = index;
+	node->next = root->next;
+	root->next = node;     //연결리스트 가장 앞쪽에 노드삽입 (스택연결리스트처럼 구현)
+}
+
+//깊이우선 탐색함수 
+void dfs(int x) {
+	if (c[x]) return;
+	c[x] = 1;  //해당 노드를 방문했으면 방문했다고 방문처리 
+	printf("%d", x);
+	Node *cur = a[x]->next;
+	while (cur != NULL) {
+		int next = cur->index;     //연결되어 있는 다음 노드를 확인
+		dfs(next); //dfs함수 재귀호출
+		cur = cur->next;
+	}
+}
+
+int main(void) {
+	scanf("%d %d", &n, &m); //n:정점갯수, m:간선갯수
+	a = (Node**)malloc(sizeof(Node*) * (MAX_SIZE));
+	for (int i = 1; i <= n; i++) {
+		a[i] = (Node*)malloc(sizeof(Node));
+		a[i]->next = NULL;
+	}
+	for (int i = 0; i < m; i++) {
+		int x, y;
+		scanf("%d %d", &x, &y);
+		addFront(a[x], y);
+		addFront(a[y], x);   // x, y정점끼리 서로 연결 (x->y, y->x 로 서로 갈 수 있다.) ,, a[ ] 는 연결리스트
+	}
+	dfs(1);  //원소1에서 부터 깊이우선탐색시행
+	system("pause");
+}
+
+
+//위의 코드는 방문순서에 대해서는 명시가 안돼있지만 깊이우선탐색 시행은 Ok  (ppt 자료 같은 경우, 작은 수의 노드를 먼저 방문)
+//깊이우선탐색은 정점의 갯수만큼 탐색을 하는 전 수탐색이므로 시간복잡도 O(N)

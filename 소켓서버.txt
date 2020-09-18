@@ -1,0 +1,68 @@
+#include <iostream>
+#include <string>
+#include <winsock2.h>
+
+using namespace std;
+
+void ShowErrorMessage(string message)
+{
+	cout << "[오류발생]: " << message << '\n';
+	system("pause");
+	exit(1);
+}
+int main()
+{
+	WSADATA wsaData;  //winsock API 데이터 구조체
+	SOCKET serverSocket, clientSocket; //server 단 에서는 서버,클라이언트용 소켓 둘다 필요
+	SOCKADDR_IN serverAddress, clientAddress;
+
+	int serverPort = 9876;
+	char received[256]; //주고받는 데이터 문자열 버퍼크기
+
+	//PF_INET은 AF_INET과 동일하다. ip v4를 이용하겠다는 의미이다 
+	//SOCK_STREAM은 TCP 형태로 어떤 서버를 운용하겠다는 것을 의미한다 
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) //Winsock을 초기화. 성공시 0반환
+		ShowErrorMessage("WSAStartup()");
+
+	serverSocket = socket(PF_INET, SOCK_STREAM, 0); // TCP 소켓을 생성
+
+	if (serverSocket == INVALID_SOCKET)
+		ShowErrorMessage("socket()");
+
+	memset(&serverAddress, 0, sizeof(serverAddress));  //주소 0으로 초기화
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_addr.s_addr = htonl(INADDR_ANY); // 4바이트 정수를 네트워크 바이트 형식으로
+	serverAddress.sin_port = htons(serverPort); // 2바이트 정수를 네트워크 바이트 형식으로
+	if (bind(serverSocket, (SOCKADDR*)&serverAddress, sizeof(serverAddress)) == SOCKET_ERROR)
+		ShowErrorMessage("bind()");
+	cout << "[현재상태] bind()\n";
+
+	if (listen(serverSocket, 5) == SOCKET_ERROR)  // 동시에 연결을 요청하는 클라이언트의 숫자를 5로 제한 
+		ShowErrorMessage("listen()");
+	cout << "[현재상태] listen()\n";
+
+	int sizeClientAddress = sizeof(clientAddress);
+	clientSocket = accept(serverSocket, (SOCKADDR*)&clientAddress, &sizeClientAddress);
+	cout << "[현재상태] accept()\n";
+
+	if (clientSocket == INVALID_SOCKET)
+		ShowErrorMessage("accept()");
+	while (1) { //클라이언트의 메세지를 받아서 그대로 다시 전달
+		int length = recv(clientSocket, received, sizeof(received), 0);
+		received[length] = NULL;   //마지막 문자를 null로 바꾸어서 예기치 못한 문자가 들어왔을 때 그것을 잘라낼 수 있게끔 한다. 
+		cout << "[클라이언트 메시지]:" << received << '\n';
+		cout << "[메시지 전송]:" << received << '\n';
+		if (strcmp(received, "[exit]") == 0) {
+			send(clientSocket, received, sizeof(received) - 1, 0);   //클라이언트가 문자 전송 시 엔터를 쳐서 전송하므로 마지막 공백문자는 제거하기 위해 -1한다 
+			cout << "[서버종료]\n";   //사용자가 보낸 문자가 [exit] 이라면 서버프로그램 종료 
+			break;
+		}
+		send(clientSocket, received, sizeof(received) - 1, 0);
+	}
+
+	closesocket(clientSocket);
+	closesocket(serverSocket);
+	WSACleanup();
+	system("pause");
+	return 0;
+}

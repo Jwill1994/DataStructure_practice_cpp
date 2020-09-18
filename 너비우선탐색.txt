@@ -1,0 +1,98 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#define INF 99999999
+#define MAX_SIZE 1001
+
+//너비우선 탐색( 큐 기반 )
+typedef struct {
+	int index;
+	struct Node *next;
+} Node;
+
+typedef struct {
+	Node *front;
+	Node *rear;
+	int count;
+} Queue;
+
+Node** a;   //연결리스트 형태로 인접한 정점들의 정보를 담아야하므로 이차원 포인터형으로 선언 
+int n, m, c[MAX_SIZE]; //정점, 간선, 방문여부체크
+
+//연결리스트 삽입함수
+void addFront(Node *root, int index) {
+	Node *node = (Node*)malloc(sizeof(Node));
+	node->index = index;
+	node->next = root->next; 
+	root->next = node;
+}
+
+//큐 삽입 함수 
+void queuePush(Queue *queue, int index) {
+	Node *node = (Node*)malloc(sizeof(Node));
+	node->index = index;
+	node->next = NULL;
+	if (queue->count == 0) {
+		queue->front = node;
+	}
+	else {
+		queue->rear->next = node;
+	}
+	queue->rear = node;
+	queue->count++;
+}
+
+//큐 추출 함수
+int queuePop(Queue *queue) {
+	if (queue->count == 0) {
+		printf("언더플로우 발생\n");
+		return -INF;
+	}
+	Node *node = queue->front;        //front 에서 한개의 노드를 추출할것
+	int index = node->index;
+	queue->front = node->next;
+	free(node);
+	queue->count--;
+	return index;
+}
+
+//너비우선탐색 함수
+void bfs(int start) {
+	Queue q;
+	q.front = q.rear = NULL;
+	q.count = 0;
+	queuePush(&q, start);
+	c[start] = 1;
+	while (q.count != 0) {
+		int x = queuePop(&q);  // pop하면서 index를 return한다 
+		printf("%d", x);
+		Node *cur = a[x]->next;
+		while (cur != NULL) {
+			int next = cur->index;
+			if (!c[next]) {   //아직 next 노드에 대해 카운트를 하지 않았다면 1 이고 if 문에 들어감 
+				queuePush(&q, next);
+				c[next] = 1;
+			}
+			cur = cur->next;
+		}
+	}
+}
+
+int main(void) {
+	scanf("%d %d", &n, &m); //n:정점갯수, m:간선갯수
+	a = (Node**)malloc(sizeof(Node*) * (MAX_SIZE));
+	for (int i = 1; i <= n; i++) {
+		a[i] = (Node*)malloc(sizeof(Node));
+		a[i]->next = NULL;         //연결리스트 초기화 
+	}
+	for (int i = 0; i < m; i++) {
+		int x, y;
+		scanf("%d %d", &x, &y);
+		addFront(a[x], y);
+		addFront(a[y], x);   // x, y정점끼리 서로 연결 (x->y, y->x 로 서로 갈 수 있다.) ,, a[ ] 는 연결리스트
+	}
+	bfs(1);  //원소1에서 부터 너비 우선탐색 시행
+	system("pause");
+}
+
+//방문순서는 고려X 알고리즘 

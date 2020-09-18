@@ -1,0 +1,57 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+
+
+using namespace std;
+/* //함수템플릿, 명시적 특수화
+template <typename T>   //슈 자료형에 구애받지 않고 동일한 객체의 기능 수행가능
+
+void change(T& a, T& b) {
+	T temp;
+	temp = a;
+	a = b;
+	b = temp;
+}
+
+template<>                 
+void change<int>(int& a, int& b)                 //int형 자료에 대한 명시적 특수화 
+{
+	cout << "정수형 데이터를 교체. \n";
+	int temp;
+	temp = a;
+	a = b;
+	b = temp;
+}
+
+int main(void) {
+	//string a = "장우성";
+	//string b = "장우진";
+	int a = 5;
+	int b = 6;
+	change(a, b);
+	cout << a << ":" << b << endl;
+	system("pause");
+}
+*/
+
+
+//클래스 템플릿 
+//template <typename T>
+template <typename T=int>
+class Data {
+private:
+	T data;
+public:
+	Data(T data) : data(data) { }   // 가상의 자료형 T에 대해 어떤 자료형이 들어와도 초기화가능
+	void setData(T data) { this->data = data; }
+	T getData() { return data; }
+};
+
+int main(void) {
+	//Data<int> data1(1);   // < > 를 통해 자료형 설정가능 
+	Data<> data1(1);   // 디폴트 템플릿 인수 
+	Data<string> data2("장우성");
+	cout << data1.getData() << ":" << data2.getData() << "\n";
+	system("pause");
+}

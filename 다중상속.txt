@@ -1,0 +1,50 @@
+#include <iostream>
+#include <string>'
+
+using namespace std;
+
+
+class Temp {             //다중상속(오버라이딩) 구현을 위한 또 다른 부모 클래스 
+public:
+	void showTemp() {
+		cout << "임시 부모 클래스. \n";
+	}
+};
+//부모 클래스
+class Person {
+private:
+	string name;
+public:
+	Person(string name) : name(name) {}
+	string getName() {
+		return name;
+	}
+	void showName() {
+		cout << "이름: " << getName() << '\n';
+	}
+};
+
+//자식(파생)클래스
+class Student : Person,public Temp {    //public 을 넣어주지 않으면 showTemp함수 못부름 
+private:
+	int studentID;    // 멤버변수 name은 따로 정의하지 않는데, Person 으로 부터 상속받았으므로 public의 생성자에서 string name 매개변수 받아올 수 있는 것 
+public : 
+	Student(int studentID, string name) : Person(name) {       //부모 생성자를 불러와서 초기화 
+		this->studentID = studentID;
+	}
+	void show() {
+		cout << "학생 번호:" << studentID << '\n';
+		cout << "학생 이름:" << getName() << '\n';
+	}
+	void showName() {
+		cout << "학생 이름:" << getName() << '\n';
+	}
+	
+};
+
+int main(void) {
+	Student student(1, "장우성");
+	student.showName();
+	student.showTemp();
+	system("pause");
+}

@@ -1,0 +1,63 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+
+using namespace std;
+/*
+// unique_ptr
+int main(void) {
+	int* arr = new int[10];
+	unique_ptr<int> p1(arr);
+	for (int i = 0; i < 10; i++) {
+		arr[i] = i;
+	}
+	for (int i = 0; i < 10; i++) {
+		cout << arr[i] << ' ';
+	}
+	p1.reset();
+	cout << '\n';
+	for (int i = 0; i < 10; i++) {
+		cout << arr[i] << ' ';
+	}
+	system("pause");
+}
+*/
+
+/*
+//shared_ptr
+int main(void) {
+	int* arr = new int[10];
+	arr[7] = 100;
+	shared_ptr<int> p1(arr);
+	cout << p1.use_count() << '\n'; //1
+	shared_ptr<int> p2(p1);
+	cout << p1.use_count() << '\n'; //2
+	shared_ptr<int> p3 = p2;
+	cout << p1.use_count() << '\n'; //3
+	p1.reset();
+	p2.reset();
+	cout << "arr[7]:" << arr[7] << '\n';
+	p3.reset();
+	cout << p2.use_count() << '\n';
+	cout << "arr[7]:" << arr[7] << '\n';
+	system("pause");
+}
+*/
+
+//weak_ptr
+int main(void) {
+	int* arr = new int(1);
+	shared_ptr<int> sp1(arr);
+	weak_ptr<int> wp = sp1; // wp는 참조 횟수 계산에서 제외
+	cout << sp1.use_count() << '\n'; //1로 동일 (weak 을 이용했으므로)
+	cout << wp.use_count() << '\n';
+	if (true) {
+		shared_ptr<int> sp2 = wp.lock(); // weak 포인터의 lock()함수를통해 shared 포인터 반환 
+		cout << sp1.use_count() << '\n';
+		cout << wp.use_count() << '\n';
+	}
+	// 스코프를 벗어나므로 sp2가 자동해제
+	cout << sp1.use_count() << '\n';
+	cout << wp.use_count() << '\n';
+	system("pause");
+}

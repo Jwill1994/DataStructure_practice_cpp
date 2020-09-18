@@ -1,0 +1,52 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+
+
+using namespace std;
+
+/* // 정적바인딩, 동적바인딩 
+class A {
+public:
+	//void show() { cout << "A 클래스" << endl; }
+	virtual void show() { cout << "A 클래스" << endl; }   //가상함수를 통한 동적바인딩
+};
+
+class B : public A  {    //B가 A를 상속받았음 
+	//void show() { cout << "B 클래스" << endl; }
+	virtual void show() { cout << "B 클래스" << endl; }
+};
+
+int main(void) {
+	A* p;   // p라는 포인터가 A라는 클래스 타입으로 명시되어 있다 (동적할당)
+	A a;
+	B b;
+	p = &a; p->show();
+	p = &b; p->show(); // 여전히 A 클래스의 show() 함수 호출        >> 포인터변수를 활용함에 있어서는 다형성 기법을 사용하기 어렵다 (**'정적바인딩' 문제)
+	system("pause");
+}
+
+//'가상함수' : 자식클래스가 재정의할 가능성이 있는 멤버함수들은 가상함수로 선언하는 것이 좋다 
+
+*/
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------
+//순수가상함수
+class A {
+public:
+	virtual void show() = 0 { cout << "A 클래스" << endl; }  //  '=0'이 순수가상함수라는 표시  >. 반드시 자식 클래스에서 해당 가상함수를 재정의 해줘야함 
+};
+
+class B : public A {
+public:
+	virtual void show() {
+		cout << "B 클래스" << endl;   // show() 가상함수를 재정의하지 않으면 B 클래스의 객체를 사용할 수 없다. (상속을 받았음에도 불구하고) 
+	}
+};
+
+int main(void) {
+	A* p;
+	B b;
+	p = &b; p->show();
+	system("pause");
+}

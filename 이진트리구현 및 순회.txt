@@ -1,0 +1,61 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+//이진트리
+
+typedef struct {
+	int data;       //실제로는 이렇게 정수형 데이터 하나가 아니라 많은 양의 데이터가 들어갈 수 있으므로 이진트리 구조가 의미가 있는 것이고, Child struct들이 메모리 낭비가 아니다 
+	struct Node *leftChild;
+	struct Node *rightChild;
+} Node;
+
+Node * initNode(int data, Node* leftChild, Node* rightChild) {
+	Node* node = (Node*)malloc(sizeof(Node));
+	node->data = data;
+	node->leftChild = leftChild;
+	node->rightChild = rightChild;
+	return node;  // 특정 노드의 포인터 반환하는 경우가 많다. 이진트리에서는!! 
+}
+
+void preorder(Node* root) {   //전위순회
+	if (root) {
+		printf("%d", root->data);
+		preorder(root->leftChild);  //재귀호출
+		preorder(root->rightChild);
+	} 
+}
+
+void inorder(Node* root) {      //중위순회
+	if (root) {
+		inorder(root->leftChild);
+		printf("%d", root->data);
+		inorder(root->rightChild);
+	}
+}
+
+void postorder(Node* root) {      //후위순회
+	if (root) {
+		postorder(root->leftChild);
+		postorder(root->rightChild);
+		printf("%d", root->data);
+	}
+}
+
+        
+int main(void) {         //슬라이드 그림과 일치하는 노드구성 
+	Node* n7 = initNode(50, NULL, NULL);
+	Node* n6 = initNode(37, NULL, NULL);
+	Node* n5 = initNode(23, NULL, NULL);
+	Node* n4 = initNode(5, NULL, NULL);
+	Node* n3 = initNode(48, n6, n7);
+	Node* n2 = initNode(17, n4, n5);
+	Node* n1 = initNode(30, n2, n3);   //root 노드
+	preorder(n1);
+	printf("\n");
+	inorder(n1);
+	printf("\n");
+	postorder(n1);
+	system("pause");
+	return 0;
+}
+
